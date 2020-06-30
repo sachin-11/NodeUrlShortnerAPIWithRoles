@@ -4,7 +4,8 @@ const {
   getUser,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  getRolebyId
 } = require('../controllers/users');
 
 const User = require('../models/User');
@@ -14,7 +15,7 @@ const router = express.Router({ mergeParams: true });
 const { protect, authorize } = require('../middleware/auth');
 
 router.use(protect);
-router.use(authorize('admin'));
+router.use(authorize('admin'))
 
 router
   .route('/')
@@ -25,6 +26,9 @@ router
   .route('/:id')
   .get(getUser)
   .put(updateUser)
-  .delete(deleteUser);
+  .delete(deleteUser)
+  
+  router.route('/:id').post(getRolebyId)
+
 
 module.exports = router;

@@ -16,17 +16,17 @@ const UserSchema = new mongoose.Schema({
       'Please add a valid email',
     ],
   },
-  role: {
-    type: String,
-    enum: ['publisher', 'admin'],
-    default: 'user',
-  },
   password: {
     type: String,
     required: [true, 'Please add a password'],
     minlength: 6,
     select: false,
   },
+  roles: [{
+    type: mongoose.Schema.ObjectId,
+    ref: 'role',
+    required: true,
+  }],
   createdAt: {
     type: Date,
     default: Date.now,
@@ -53,5 +53,8 @@ UserSchema.methods.getSignJwtToken = function () {
 UserSchema.methods.matchPassword = async function (enteredPassword) {
   return bcrypt.compare(enteredPassword, this.password);
 };
+
+
+
 
 module.exports = mongoose.model('User', UserSchema);
