@@ -19,6 +19,18 @@ exports.register = async (req, res, next) => {
   })
 };
 
+exports.getRolebyId = async (req, res, next ) => {
+  try {
+    let role = await Roles.create(req.body);
+    let user  = await User.findOneAndUpdate({ _id: req.params.id}, { $push: { roles: role._id}}, { new: true });
+    res.status(200).json(user)
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, message: 'Server Error'})
+  }
+}
+
+
 //@desc Login user
 //@route POST /api/v1/auth/login
 //@access private

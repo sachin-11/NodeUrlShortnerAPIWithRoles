@@ -12,9 +12,9 @@ const {
 const { protect, authorize } = require('../middleware/auth');
 
 router.route('/').get(getShorturl)
-router.route('/shortUrls').post(protect, authorize(['admin', 'user']), createUrls);
+router.route('/shortUrls').post(protect, authorize(['user', 'admin']), createUrls);
 router.route('/:shortUrl').get(getSingleUrls);
-router.route('/:id').post(protect,  createShorturlByUser).put(protect, authorize(['admin', 'user']) ,updateUrlshortner).delete(protect, deleteUrlshortner)
+router.route('/:id').post(protect, authorize(['user', 'admin']),   createShorturlByUser).put(protect, authorize(['admin']) ,updateUrlshortner).delete(protect, deleteUrlshortner)
 
 
 

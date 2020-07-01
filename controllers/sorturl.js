@@ -1,5 +1,6 @@
 const ShortUrl = require('../models/ShortUrl');
 const User = require('../models/User');
+const Roles = require('../models/Roles')
 
 //@desc Get shorturl
 //@route GET /api/v1/shorturl
@@ -49,11 +50,11 @@ exports.createUrls = async (req, res) => {
         const full = req.body;
          //Add user to req.body
          req.body.user = req.user.id;
-         const publishedUrl  = await ShortUrl.findOne({ user: req.user.id });
+         const publishedUrl  = await ShortUrl.find({ user: req.user.id });
         //if user is not an admin , they can add one article
         // console.log("---Object.values(req.user.roles)----\n",Object.values(req.user.roles));
-        var alowAdmin = !req.user.roles.some(role => role.name === 'admin')
-        if (publishedUrl &&  alowAdmin){
+        var allowAdmin = !req.user.roles.some(role => role.name !== 'admin')
+        if (publishedUrl &&  allowAdmin){
             return res.status(401).json({ success: false , message: 'user alraedy created short url'})
   }
         
@@ -70,8 +71,9 @@ exports.createShorturlByUser = async(req, res, next) => {
         let user = await User.create(req.body);
         const publishedUrl  = await ShortUrl.findOne({ user: req.user.id });
         //if user is not an admin , they can add one url
-        if (publishedUrl && req.user.role !== 'admin') {
-        return res.status(401).json({ success: false , message: 'user alraedy created short url'})
+        var alowAdmin = !req.user.roles.some(role => role.name !== 'admin')
+        if (publishedUrl &&  alowAdmin){
+            return res.status(401).json({ success: false , message: 'user alraedy created short url'})
   }
    let shortUrl  = await ShortUrl.findOneAndUpdate({ _id: req.params.id}, { $push: { user: user._id}}, { new: true });
    res.status(200).json(shortUrl)
@@ -89,9 +91,8 @@ exports.updateUrlshortner = async (req, res, next ) => {
         if (!shorturl) {
             return res.status(400).json({ success: false, message: `No url is found ${req.params.id}`})
           }
-
           //Make sure user is shorturl is  owner
-          if (shorturl.user.toString() !== req.user.id && req.user.role !== 'admin') {
+          if (shorturl.user.toString() !== req.user.id && req.user.roles.some(role => role.name !== 'admin')) {
             return res.status(401).json({ success: false, message: 'Not authorize to update url shortner'})
           }
 
@@ -111,7 +112,7 @@ exports.deleteUrlshortner = async (req, res, next) => {
             return res.status(400).json({ success: false, message: `No url is found ${req.params.id}`})
           }
           //Make sure user is shorturl is  owner
-          if (shorturl.user.toString() !== req.user.id && req.user.role !== 'admin') {
+          if (shorturl.user.toString() !== req.user.id && req.user.roles !== 'admin') {
             return res.status(401).json({ success: false, message: 'Not authorize to delete url shortner'})
           }
           shorturl.remove();

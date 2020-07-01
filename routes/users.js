@@ -28,7 +28,7 @@ router
   .put(updateUser)
   .delete(deleteUser)
   
-  router.route('/:id').post(getRolebyId)
+
 
 
 module.exports = router;
