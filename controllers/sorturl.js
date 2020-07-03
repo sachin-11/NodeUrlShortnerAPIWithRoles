@@ -47,22 +47,14 @@ exports.getSingleUrls = async (req, res) => {
 
 exports.createUrls = async (req, res) => {
     try {
-        const full = req.body;
          //Add user to req.body
          req.body.user = req.user.id;
-         const publishedUrl  = await ShortUrl.find({ user: req.user.id });
-        //if user is not an admin , they can add one article
-        // console.log("---Object.values(req.user.roles)----\n",Object.values(req.user.roles));
-        var allowAdmin = !req.user.roles.some(role => role.name !== 'admin')
-        if (publishedUrl &&  allowAdmin){
-            return res.status(401).json({ success: false , message: 'user alraedy created short url'})
-  }
-        
-      const sort =  await ShortUrl.create(full)
-       res.json({ success: true, data: sort})
+        const sort = new ShortUrl(req.body)
+        await sort.save();
+        res.status(200).json(sort);
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ success: false, message: 'Server Error'})
+        res.status(500).json({ success: false, message: error.message })
     }
 }
 
@@ -112,7 +104,7 @@ exports.deleteUrlshortner = async (req, res, next) => {
             return res.status(400).json({ success: false, message: `No url is found ${req.params.id}`})
           }
           //Make sure user is shorturl is  owner
-          if (shorturl.user.toString() !== req.user.id && req.user.roles !== 'admin') {
+          if (shorturl.user.toString() !== req.user.id && req.user.roles.some(role =>  role.name  !== 'admin')) {
             return res.status(401).json({ success: false, message: 'Not authorize to delete url shortner'})
           }
           shorturl.remove();

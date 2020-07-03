@@ -32,7 +32,7 @@ exports.protect = async (req, res, next) => {
 exports.authorize =  (roles) => {
   //console.log("ttttttttttttttt",roles);
   return (req, res, next) => {
-    //console.log("iiiiiiiiiii",req.user.roles);
+    // console.log("iiiiiiiiiii",req.user);
     if(req.user.roles.some(role => roles.includes(role.name))) {
      return  next();
     }

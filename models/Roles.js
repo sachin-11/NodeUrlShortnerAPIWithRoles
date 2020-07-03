@@ -11,6 +11,21 @@ const RoleSchema = new mongoose.Schema({
   },
 });
 
+// RoleSchema.pre("save", true, function(next, done,) {
+//   var self = this
+//   mongoose.models["role"].findOne({name : self.name, }, function(err, role) {
+//       if(err) {
+//           done(err);
+//       } else if(role) {
+//           self.invalidate("name", `Role with name(${self.name}) is already exist`);
+//           done(new Error(`Role with name(${self.name}) is already exist`));
+//       } else {
+//           done();
+//       }
+//   });
+//  next();
+// });
+
 
 
 

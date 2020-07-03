@@ -27,11 +27,6 @@ const UserSchema = new mongoose.Schema({
     ref: 'role',
     required: true,
   }],
-  url: [{
-    type: mongoose.Schema.ObjectId,
-    ref: 'ShortUrl',
-    required: true
-  }],
   createdAt: {
     type: Date,
     default: Date.now,
